@@ -193,7 +193,11 @@ if (count($argv) > 1) {
     echo "[$__BLUE__ IF $__RESET__] There's some command you can use to interact with me\n";
     echo "\n       - make:controller [--OPTION] <contoller-name>";
     echo "\n                          --resource";
-    echo "\n       - make:model <model-name>\n\n";
+    echo "\n       - make:model <model-name>";
+    echo "\n       - make:migration <model-name>";
+    echo "\n       - migrate";
+    echo "\n       - db:clear";
+    echo "\n       - serve\n\n";
     echo "[$__BLUE__ IF $__RESET__] Tell me if you need me again!\n";
   } else if ($command == "make:migration") {
     if (count($argv) <= 2) {
