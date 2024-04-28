@@ -261,6 +261,9 @@ if (count($argv) > 1) {
     echo "[$__BLUE__ IF $__RESET__] Clearing Database...\n";
     Migrations::dropTables();
     echo "[$__GREEN__ OK $__RESET__] Success.\n";
+  } else if ($command == "serve") {
+    echo "[$__BLUE__ IF $__RESET__] Starting...\n";
+    exec("php -S localhost:8000");
   } else {
     echo "[$__RED__ ER $__RESET__] Im not familiar with it. $__GREEN__'$command'$__RESET__?";
   }
