@@ -16,13 +16,11 @@ class Blueprint
   public function string(string $field_name, int $length = 255)
   {
     $this->fields[] = "$field_name VARCHAR($length)";
-    return $this;
   }
 
   public function id(bool $zerofill = false, int $length = 20,)
   {
     $this->fields[] = "id INT($length) AUTO_INCREMENT " . ($zerofill ? "UNSIGNED ZEROFILL" : "" . "PRIMARY KEY");
-    return $this;
   }
 
   public function create()

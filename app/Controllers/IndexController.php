@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Dependencies\Http\Request;
+use Dependencies\Http\Response;
 
 class IndexController extends Controller
 {

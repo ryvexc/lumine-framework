@@ -8,34 +8,22 @@ class Route
 {
   public static function get($route, array $controller)
   {
-    $route = ltrim($route, "/");
-    $route = rtrim($route, "/");
-
-    Variable::$routes[] = ["name" => $route, "controller" => $controller, "method" => "GET"];
+    Variable::$routes[] = ["name" => ltrim(rtrim($route, "/"), "/"), "controller" => $controller, "method" => "GET"];
   }
 
   public static function post($route, array $controller)
   {
-    $route = ltrim($route, "/");
-    $route = rtrim($route, "/");
-
-    Variable::$routes[] = ["name" => $route, "controller" => $controller, "method" => "POST"];
+    Variable::$routes[] = ["name" => ltrim(rtrim($route, "/"), "/"), "controller" => $controller, "method" => "POST"];
   }
 
   public static function put($route, array $controller)
   {
-    $route = ltrim($route, "/");
-    $route = rtrim($route, "/");
-
-    Variable::$routes[] = ["name" => $route, "controller" => $controller, "method" => "PUT"];
+    Variable::$routes[] = ["name" => ltrim(rtrim($route, "/"), "/"), "controller" => $controller, "method" => "PUT"];
   }
 
   public static function delete($route, array $controller)
   {
-    $route = ltrim($route, "/");
-    $route = rtrim($route, "/");
-
-    Variable::$routes[] = ["name" => $route, "controller" => $controller, "method" => "DELETE"];
+    Variable::$routes[] = ["name" => ltrim(rtrim($route, "/"), "/"), "controller" => $controller, "method" => "DELETE"];
   }
 
   public static function resource($route, $controller)

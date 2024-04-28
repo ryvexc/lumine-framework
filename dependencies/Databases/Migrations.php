@@ -8,22 +8,16 @@ class Migrations
 {
   public static function GetAllMigrations()
   {
-    $namespace = 'Database\Migrations';
     $classesInNamespace = [];
 
-    $migrationFiles = glob('database/migrations/*.php');
-
-    foreach ($migrationFiles as $file) {
+    foreach (glob('database/migrations/*.php') as $file) {
       include_once $file;
 
-      $declaredClasses = get_declared_classes();
-
-      foreach ($declaredClasses as $className) {
+      foreach (get_declared_classes() as $className) {
         $class = new ReflectionClass($className);
 
-        if ($class->inNamespace() && $class->getNamespaceName() === $namespace) {
+        if ($class->inNamespace() && $class->getNamespaceName() === 'Database\Migrations')
           $classesInNamespace[] = $className;
-        }
       }
     }
 
