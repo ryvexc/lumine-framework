@@ -1,0 +1,270 @@
+<?php
+spl_autoload_register();
+
+use Dependencies\Databases\Migrations;
+
+$__RED__ = "\033[31m";
+$__GREEN__ = "\033[32m";
+$__YELLOW__ = "\033[33m";
+$__BLUE__ = "\033[34m";
+$__RESET__ = "\033[0m";
+
+function create_controller_content($controller_name, $useResource)
+{
+  if (!$useResource) return "<?php
+namespace App\Controllers;
+
+use Dependencies\Http\Request;
+
+class $controller_name" . "Controller extends Controller
+{
+  public function index(Request \$request)
+  {
+    //
+  }
+}        
+";
+
+  else return "<?php
+namespace App\Controllers;
+
+use Dependencies\Http\Request;
+
+class $controller_name" . "Controller extends Controller
+{
+  public function index(Request \$request)
+  {
+    //
+  }
+
+  public function store(Request \$request)
+  {
+    // 
+  }
+
+  public function update(Request \$request)
+  {
+    // 
+  }
+
+  public function destroy(Request \$request)
+  {
+    // 
+  }
+}        
+";
+}
+
+function create_model_content($model_name)
+{
+  return "<?php
+namespace App\Models;
+
+use Dependencies\Models\Model;
+
+class $model_name extends Model
+{
+  protected \$table = \"" . strtolower($model_name) . "\";
+}
+";
+}
+
+function create_migration_content($migration_name)
+{
+  return "<?php
+namespace Database\Migrations;
+
+use Dependencies\Databases\Blueprint;
+use Dependencies\Databases\Database;
+
+class $migration_name" . "_Migration
+{
+  public static function up()
+  {
+    \$blueprint = new Blueprint('$migration_name');
+    \$blueprint->id();
+
+    \$blueprint->create();
+  }
+
+  public static function destroy()
+  {
+    Database::dropTableIfExists('$migration_name');
+  }
+}
+";
+}
+
+if (count($argv) > 1) {
+  $command = $argv[1];
+
+  if ($command == "make:controller") {
+    if (count($argv) <= 2) {
+      echo "[$__YELLOW__ WR $__RESET__] Provide controller name!\n";
+      echo "       \n";
+      echo "       Example (basic):\n";
+      echo "         - make:controller $__BLUE__" . "Car$__RESET__\n";
+      echo "         - make:controller $__BLUE__" . "Food$__RESET__\n";
+      echo "       Example (resource):\n";
+      echo "         - make:controller $__YELLOW__--resource$__RESET__ $__BLUE__" . "Car$__RESET__\n";
+      echo "         - make:controller $__YELLOW__--resource$__RESET__ $__BLUE__" . "Food$__RESET__\n\n";
+      echo "[$__RED__ ER $__RESET__] Create Controller Failed.\n";
+    } else {
+      $useResource = false;
+      $controllers = $argv;
+
+      array_shift($controllers);
+      array_shift($controllers);
+
+      if ($controllers[0] == "--resource") {
+        $useResource = true;
+        array_shift($controllers);
+      }
+
+      if (count($controllers) == 0) {
+        echo "[$__RED__ ER $__RESET__] No Controllers.\n";
+        die();
+      }
+
+      echo "[$__YELLOW__ WT $__RESET__] Creating Controller...\n";
+      echo "       \n";
+      echo "       Path       : app/Controllers\n";
+      echo "       Controllers:\n";
+      foreach ($controllers as $controller)
+        echo "         - $controller\t\t=> " . $controller . "Controller.php\n";
+      echo "\n";
+
+      foreach ($controllers as $controller) {
+        echo "[$__BLUE__ .. $__RESET__] Creating$__BLUE__ $controller$__RESET__ Controller\n";
+
+        if (file_exists("app/Controllers/" . $controller . "Controller.php")) {
+          echo "[$__RED__ ER $__RESET__]$__BLUE__ $controller" . "Controller.php$__RESET__ already exists.\n";
+          continue;
+        }
+
+        $controller_file = fopen("app/Controllers/" . $controller . "Controller.php", "w");
+
+        fwrite($controller_file, create_controller_content($controller, $useResource));
+        echo "[$__GREEN__ OK $__RESET__] Success\n";
+      }
+    }
+  } else if ($command == "make:model") {
+    if (count($argv) <= 2) {
+      echo "[$__YELLOW__ WR $__RESET__] Provide model name!\n";
+      echo "       \n";
+      echo "       Example :\n";
+      echo "         - make:model $__BLUE__" . "Car$__RESET__\n";
+      echo "         - make:model $__BLUE__" . "Food$__RESET__\n\n";
+      echo "[$__RED__ ER $__RESET__] Create Model Failed.\n";
+    } else {
+      $models = $argv;
+
+      array_shift($models);
+      array_shift($models);
+
+      if (count($models) == 0) {
+        echo "[$__RED__ ER $__RESET__] No Models.\n";
+        die();
+      }
+
+      echo "[$__YELLOW__ WT $__RESET__] Creating Models...\n";
+      echo "       \n";
+      echo "       Path   : app/Models\n";
+      echo "       Models :\n";
+      foreach ($models as $model)
+        echo "         - $model\t\t=> " . $model . ".php\n";
+      echo "\n";
+
+      foreach ($models as $model) {
+        echo "[$__BLUE__ .. $__RESET__] Creating$__BLUE__ $model$__RESET__ Model\n";
+
+        if (file_exists("app/Models/" . $model . ".php")) {
+          echo "[$__RED__ ER $__RESET__]$__BLUE__ $model" . ".php$__RESET__ already exists.\n";
+          continue;
+        }
+
+        $model_file = fopen("app/Models/" . $model . ".php", "w");
+
+        fwrite($model_file, create_model_content($model));
+        echo "[$__GREEN__ OK $__RESET__] Success\n";
+      }
+    }
+  } else if ($command == "help") {
+    echo "[$__BLUE__ IF $__RESET__] There's some command you can use to interact with me\n";
+    echo "\n       - make:controller [--OPTION] <contoller-name>";
+    echo "\n                          --resource";
+    echo "\n       - make:model <model-name>\n\n";
+    echo "[$__BLUE__ IF $__RESET__] Tell me if you need me again!\n";
+  } else if ($command == "make:migration") {
+    if (count($argv) <= 2) {
+      echo "[$__YELLOW__ WR $__RESET__] Provide migration name!\n";
+      echo "       \n";
+      echo "       Example :\n";
+      echo "         - make:migration $__BLUE__" . "car$__RESET__\n";
+      echo "         - make:migration $__BLUE__" . "food$__RESET__\n\n";
+      echo "[$__RED__ ER $__RESET__] Create Migration Failed.\n";
+    } else {
+      $current_date = date("Ymd_his");
+
+      $migrations = $argv;
+
+      array_shift($migrations);
+      array_shift($migrations);
+
+      if (count($migrations) == 0) {
+        echo "[$__RED__ ER $__RESET__] No Models.\n";
+        die();
+      }
+
+      echo "[$__YELLOW__ WT $__RESET__] Creating Migration...\n";
+      echo "       \n";
+      echo "       Path   : database/migrations\n";
+      echo "       Migrations :\n";
+      foreach ($migrations as $migration)
+        echo "         - $migration\t=> " . $current_date . "_" . $migration . ".php\n";
+      echo "\n";
+
+      foreach ($migrations as $migration) {
+        echo "[$__BLUE__ .. $__RESET__] Creating$__BLUE__ $migration$__RESET__ Migration\n";
+
+        $dir = new DirectoryIterator("database/migrations");
+        $pattern = '/^\d{8}_\d{6}_' . preg_quote($migration) . '\.php$/';
+
+        $fileExists = false;
+        foreach ($dir as $fileInfo) {
+          $fileExists = $fileExists || $fileInfo->isFile() && preg_match($pattern, $fileInfo->getBasename());
+        }
+
+        if ($fileExists) {
+          echo "[$__RED__ ER $__RESET__]$__BLUE__ $migration$__RESET__ Migration already exists.\n";
+          continue;
+        }
+
+        $migration_file = fopen("database/migrations/" . $current_date . "_" . $migration . ".php", "w");
+
+        fwrite($migration_file, create_migration_content($migration));
+        echo "[$__GREEN__ OK $__RESET__] Success\n";
+      }
+    }
+  } else if ($command == "migrate") {
+    require_once "dependencies/Databases/Migrations.php";
+    echo "[$__BLUE__ IF $__RESET__] Loading migrations...\n\n";
+
+    foreach (Migrations::GetAllMigrations() as $migration_class) {
+      echo "[$__YELLOW__ WT $__RESET__] Drop and creating $__BLUE__$migration_class$__RESET__...\n";
+      Migrations::Migrate($migration_class);
+    }
+
+    echo "[$__GREEN__ OK $__RESET__] Created.\n";
+  } else if ($command == "db:clear") {
+    require_once "dependencies/Databases/Migrations.php";
+    echo "[$__BLUE__ IF $__RESET__] Clearing Database...\n";
+    Migrations::dropTables();
+    echo "[$__GREEN__ OK $__RESET__] Success.\n";
+  } else {
+    echo "[$__RED__ ER $__RESET__] Im not familiar with it. $__GREEN__'$command'$__RESET__?";
+  }
+} else {
+  echo "[$__BLUE__ IF $__RESET__] Hi, im lumine!\n";
+  echo "       Type 'php lumine help' for help!\n";
+}
